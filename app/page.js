@@ -2,12 +2,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import useShakeDetector from "./hooks/useShakeDetector";
-import { requestPermission } from "./lib/permission"; // Adjust path as needed
+import { isIOSDevice, requestPermission } from "./lib/permission"; // Adjust path as needed
 
 export default function Home() {
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(11);
-  const [isPermissionGranted, setIsPermissionGranted] = useState(false);
 
   const { isShaking, shakeIntensity } = useShakeDetector();
 
@@ -50,10 +49,11 @@ export default function Home() {
   }, [timer]);
 
   const handlePermission = useCallback(async () => {
-    if(isPermissionGranted) return
     const permissionGranted = await requestPermission();
-    setIsPermissionGranted(permissionGranted);
-  }, [isPermissionGranted])
+    if(permissionGranted) {
+      window.location.reload()
+    }
+  }, [])
 
   useEffect(() => {
     // Define the onload handler
@@ -75,9 +75,11 @@ export default function Home() {
       <div className="w-96 h-96 z-10 text-center overflow-hidden" id="container">
         <p>score: {score}</p>
         <p>timer: {timer}</p>
+        {isIOSDevice ? (
         <button onClick={handlePermission}>
-          {isPermissionGranted ? "Shake now!" : "Request Permission"}
+          Request Permission
         </button>
+        ) : null}
       </div>
     </main>
   );
