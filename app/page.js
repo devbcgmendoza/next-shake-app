@@ -53,7 +53,7 @@ export default function Home() {
       const requestPermission = DeviceMotionEvent.requestPermission;
 
       const isIOS = typeof requestPermission === 'function';
-      if (isIOS) {
+      // if (isIOS) {
         try {
           const response = await requestPermission();
           if (response === 'granted') {
@@ -65,11 +65,12 @@ export default function Home() {
         } catch (error) {
           console.error('Permission request failed', error);
         }
-      } else {
-        // For non-iOS or where permission is not required
-        console.log('Device motion permission not required.');
       }
-    };
+    //   else {
+    //     // For non-iOS or where permission is not required
+    //     console.log('Device motion permission not required.');
+    //   }
+    // };
 
     handlePermission();
   }, []);
