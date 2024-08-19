@@ -49,24 +49,13 @@ export default function Home() {
     return () => clearInterval(timerId);
   }, [timer]);
 
-  const handleRequestPermission = async () => {
-    const granted = await getPermission();
-    if (granted) {
-      setPermissionGranted(true);
-    } else {
-      console.log('Permission not granted or not supported');
-    }
-  };
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="w-96 h-96 z-10 text-center overflow-hidden" id="container">
         <p>score: {score}</p>
         <p>timer: {timer}</p>
         <IOSView>
-          <button onClick={handleRequestPermission}>
-            {permissionGranted ? "Permission granted" : "Request Permission"}
-          </button>
+          <iframe onLoad={getPermission} title="test" src="www.camel.ph"/>
         </IOSView>
       </div>
     </main>
