@@ -73,7 +73,7 @@ export default function Home() {
       <div className="w-96 h-96 z-10 text-center overflow-hidden" id="container">
         <p>score: {score}</p>
         <p>timer: {timer}</p>
-        {isIOSDevice() && !requestPermission ? (
+        {isIOSDevice() ? (
         <button onClick={requestPermission}>
           Request Permission
         </button>
