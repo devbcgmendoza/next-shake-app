@@ -61,7 +61,7 @@ export default function Home() {
         <p>score: {score}</p>
         <p>timer: {timer}</p>
         <IOSView>
-          <div onClick={getPermission} style={{ display: "none" }} id="permission">
+          <div onClick={getPermission}>
             Camel Run needs to access your device motion gesture and device orientation.
           </div>
         </IOSView>
