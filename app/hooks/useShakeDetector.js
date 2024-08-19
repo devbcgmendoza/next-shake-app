@@ -32,14 +32,9 @@ const useShakeDetector = () => {
   }, []);
 
   const requestPermission = async () => {
-    const requestPermissionFn =
-      DeviceMotionEvent.requestPermission && typeof DeviceMotionEvent.requestPermission === "function"
-        ? DeviceMotionEvent.requestPermission
-        : null;
-
-    if (requestPermissionFn) {
+    if (DeviceMotionEvent.requestPermission) {
       try {
-        const response = await requestPermissionFn();
+        const response = await DeviceMotionEvent.requestPermission();
         if (response === "granted") {
           setIsPermissionGranted(true);
           window.addEventListener("devicemotion", handleDeviceMotion);
@@ -57,7 +52,6 @@ const useShakeDetector = () => {
   };
 
   useEffect(() => {
-    // Check for iOS devices and request permission
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     if (isIOS) {
@@ -71,7 +65,7 @@ const useShakeDetector = () => {
     return () => {
       window.removeEventListener("devicemotion", handleDeviceMotion);
     };
-  }, [handleDeviceMotion, requestPermission]);
+  }, [handleDeviceMotion]);
 
   return { isShaking, shakeIntensity, isPermissionGranted };
 };

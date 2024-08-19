@@ -55,7 +55,7 @@ export default function Home() {
 
         {!isPermissionGranted && (
           <button
-            onClick={() => window.location.reload()} // or any appropriate action for iOS permission
+            onClick={() => window.location.reload()} // Triggering a reload to request permission if not granted
             style={{ border: "1px solid red", padding: ".5rem 1rem", borderRadius: "1rem" }}
           >
             Request Device Motion Permission
