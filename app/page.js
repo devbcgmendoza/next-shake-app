@@ -52,7 +52,7 @@ export default function Home() {
   useEffect(() => {
     const permission = document.getElementById("permission")
     if(!permission) return
-    permission.style.display = "visible"
+    permission.style.display = "block"
   }, [])
 
   return (
@@ -61,7 +61,7 @@ export default function Home() {
         <p>score: {score}</p>
         <p>timer: {timer}</p>
         <IOSView>
-          <div onClick={getPermission}>
+          <div onClick={getPermission} style={{ display: "none" }} id="permission">
             Camel Run needs to access your device motion gesture and device orientation.
           </div>
         </IOSView>
