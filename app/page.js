@@ -51,6 +51,7 @@ export default function Home() {
 
   useEffect(() => {
     const permission = document.getElementById("permission")
+    if(!permission) return
     permission.style.display = "visible"
   }, [])
 
