@@ -35,6 +35,7 @@ const useShakeDetector = () => {
     // const setupEventListeners = async () => {
     //   const permissionGranted = await getPermission();
     //   if (permissionGranted) {
+    //     console.log("@@@@@@@@@@")
     //     window.addEventListener('devicemotion', handleDeviceMotion);
     //   }
     // };
