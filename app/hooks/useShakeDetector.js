@@ -4,7 +4,6 @@ const useShakeDetector = () => {
   const [isShaking, setIsShaking] = useState(false);
   const [shakeIntensity, setShakeIntensity] = useState(0);
   const [isPermissionGranted, setIsPermissionGranted] = useState(false);
-  const [isAndroidDevice, setIsAndroidDevice] = useState(false);
 
   const handleDeviceMotion = useCallback((event) => {
     const { accelerationIncludingGravity } = event;
@@ -51,24 +50,30 @@ const useShakeDetector = () => {
         console.error("Permission request failed", error);
       }
     } else {
-      setIsPermissionGranted(true); // No permission required
+      // Automatically enable device motion for platforms where no permission request is needed
+      setIsPermissionGranted(true);
       window.addEventListener("devicemotion", handleDeviceMotion);
     }
   };
 
   useEffect(() => {
-    // Check for Android device
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    setIsAndroidDevice(isAndroid);
-  }, []);
+    // Check for iOS devices and request permission
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-  useEffect(() => {
+    if (isIOS) {
+      requestPermission();
+    } else {
+      // Automatically enable device motion for non-iOS devices
+      setIsPermissionGranted(true);
+      window.addEventListener("devicemotion", handleDeviceMotion);
+    }
+
     return () => {
       window.removeEventListener("devicemotion", handleDeviceMotion);
     };
   }, [handleDeviceMotion]);
 
-  return { isShaking, shakeIntensity, isPermissionGranted, requestPermission, isAndroidDevice };
+  return { isShaking, shakeIntensity, isPermissionGranted };
 };
 
 export default useShakeDetector;
