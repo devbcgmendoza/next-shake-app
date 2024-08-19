@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { requestPermission } from '../lib/permission'; // Adjust path as needed
 
 const useShakeDetector = () => {
   const [isShaking, setIsShaking] = useState(false);
@@ -31,26 +32,14 @@ const useShakeDetector = () => {
       }
     };
 
-    const handlePermission = async () => {
-      const requestPermission = DeviceMotionEvent.requestPermission;
-
-      if (typeof requestPermission === 'function') {
-        try {
-          const response = await requestPermission();
-          if (response === 'granted') {
-            window.addEventListener('devicemotion', handleDeviceMotion);
-          } else {
-            console.warn('Device motion permission denied.');
-          }
-        } catch (error) {
-          console.error('Permission request failed', error);
-        }
-      } else {
+    const setupEventListeners = async () => {
+      const permissionGranted = await requestPermission();
+      if (permissionGranted) {
         window.addEventListener('devicemotion', handleDeviceMotion);
       }
     };
 
-    handlePermission();
+    setupEventListeners();
 
     // Cleanup function to remove the event listener
     return () => {

@@ -2,10 +2,12 @@
 
 import { useState, useEffect, useCallback } from "react";
 import useShakeDetector from "./hooks/useShakeDetector";
+import { requestPermission } from "./lib/permission"; // Adjust path as needed
 
 export default function Home() {
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(11);
+  const [isPermissionGranted, setIsPermissionGranted] = useState(false);
 
   const { isShaking, shakeIntensity } = useShakeDetector();
 
@@ -47,45 +49,35 @@ export default function Home() {
     return () => clearInterval(timerId);
   }, [timer]);
 
-  const requestPermission = async () => {
-    if (typeof DeviceMotionEvent.requestPermission === 'function') {
-      try {
-        const response = await DeviceMotionEvent.requestPermission();
-        if (response === 'granted') {
-          window.location.reload()
-        } else {
-          console.warn('Device motion permission denied.');
-        }
-      } catch (error) {
-        console.error('Permission request failed', error);
-      }
-    } else {
-      // In case permission request is not supported, assume permission is granted
-      window.location.reload()
-    }
+  const handlePermission = async () => {
+    if(permissionGranted) return
+
+    const permissionGranted = await requestPermission();
+    setIsPermissionGranted(permissionGranted);
   };
 
   useEffect(() => {
-    const handleLoad = () => {
-      requestPermission();
+    // Define the onload handler
+    const handleLoad = async () => {
+      await handlePermission();
     };
 
-    // Trigger onload event handler
+    // Attach the onload event handler
     window.addEventListener('load', handleLoad);
 
     // Clean up the event listener on component unmount
     return () => {
       window.removeEventListener('load', handleLoad);
     };
-  }, []);
+  }, []); // Empty dependency array ensures this runs only once
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="w-96 h-96 z-10 text-center overflow-hidden" id="container">
         <p>score: {score}</p>
         <p>timer: {timer}</p>
-        <button onClick={requestPermission}>
-          Request Permission
+        <button onClick={handlePermission}>
+          {isPermissionGranted ? "Shake now!" : "Request Permission"}
         </button>
       </div>
     </main>
