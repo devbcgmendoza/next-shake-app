@@ -1,76 +1,61 @@
-import { useState, useEffect, useCallback } from "react";
+function useShakeDetector() {
+  let isShaking = false;
+  let shakeIntensity = 0;
 
-const useShakeDetector = () => {
-  const [isShaking, setIsShaking] = useState(false);
-  const [shakeIntensity, setShakeIntensity] = useState(0);
-  const [isPermissionGranted, setIsPermissionGranted] = useState(false);
+  const SHAKE_THRESHOLD = 15; // Adjust this value as needed
 
-  const handleDeviceMotion = useCallback((event) => {
-    const { accelerationIncludingGravity } = event;
+  const handleDeviceMotion = (event) => {
+    const accelerationIncludingGravity = event.accelerationIncludingGravity;
 
-    if (!accelerationIncludingGravity) return;
+    if (!accelerationIncludingGravity) return; // Guard clause to handle null
 
     const { x, y, z } = accelerationIncludingGravity;
 
-    if (x === null || y === null || z === null) return;
+    if (x === null || y === null || z === null) return; // Guard clause for null values
 
+    // Calculate the acceleration magnitude
     const acceleration = Math.sqrt(x * x + y * y + z * z);
-    const SHAKE_THRESHOLD = 15;
 
+    // Check if the shake exceeds the threshold
     if (acceleration > SHAKE_THRESHOLD) {
-      setIsShaking(true);
-      setShakeIntensity(acceleration - SHAKE_THRESHOLD);
+      isShaking = true;
+      shakeIntensity = acceleration - SHAKE_THRESHOLD;
 
+      // Optional: reset shaking status after a short delay
       setTimeout(() => {
-        setIsShaking(false);
-        setShakeIntensity(0);
-      }, 1000);
+        isShaking = false;
+        shakeIntensity = 0;
+        // Optional: Call any callback or update UI here if needed
+      }, 1000); // Shake detected for 1 second
     } else {
-      setIsShaking(false);
-      setShakeIntensity(0);
-    }
-  }, []);
-
-  const requestPermission = async () => {
-    const requestPermissionFn =
-      DeviceMotionEvent.requestPermission && typeof DeviceMotionEvent.requestPermission === "function"
-        ? DeviceMotionEvent.requestPermission
-        : null;
-
-    if (requestPermissionFn) {
-      try {
-        const response = await requestPermissionFn();
-        if (response === "granted") {
-          setIsPermissionGranted(true);
-          window.addEventListener("devicemotion", handleDeviceMotion);
-        } else {
-          console.warn("Device motion permission denied.");
-        }
-      } catch (error) {
-        console.error("Permission request failed", error);
-      }
-    } else {
-      setIsPermissionGranted(true); // No permission required
-      window.addEventListener("devicemotion", handleDeviceMotion);
+      isShaking = false;
+      shakeIntensity = 0;
     }
   };
 
-  useEffect(() => {
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const handlePermission = async () => {
+    // Check if requestPermission method is available
+    const requestPermission = DeviceMotionEvent.requestPermission;
 
+    const isIOS = typeof requestPermission === 'function';
     if (isIOS) {
-      requestPermission();
+      try {
+        const response = await requestPermission();
+        if (response === 'granted') {
+          window.addEventListener('devicemotion', handleDeviceMotion);
+        }
+      } catch (error) {
+        console.error('Permission request failed', error);
+      }
     } else {
-      setIsPermissionGranted(true); // Assume permission is granted for non-iOS devices
-      window.addEventListener("devicemotion", handleDeviceMotion);
+      // For non-iOS or where permission is not required
+      window.addEventListener('devicemotion', handleDeviceMotion);
     }
+  };
 
-    return () => {
-      window.removeEventListener("devicemotion", handleDeviceMotion);
-    };
-  }, [handleDeviceMotion]);
+  // Call permission handler
+  handlePermission();
 
-  return { isShaking, shakeIntensity, isPermissionGranted, requestPermission };
-};
-
-export default useShakeDetector;
+  // Return an object with the state variables (could be used for further operations)
+  return { isShaking, shakeIntensity };
+}
