@@ -7,7 +7,6 @@ import { isIOSDevice, requestPermission } from "./lib/permission"; // Adjust pat
 export default function Home() {
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(11);
-
   const { isShaking, shakeIntensity } = useShakeDetector();
 
   const createCoin = useCallback(() => {
@@ -48,25 +47,20 @@ export default function Home() {
     return () => clearInterval(timerId);
   }, [timer]);
 
-  const handlePermission = useCallback(async () => {
-    const permissionGranted = await requestPermission();
-    if(permissionGranted) {
+  const handlePermission = useCallback(() => {
+    if(requestPermission()) {
       window.location.reload()
     }
   }, [])
 
   useEffect(() => {
-    // Define the onload handler
-    const handleLoad = async () => {
-      await handlePermission();
-    };
 
     // Attach the onload event handler
-    window.addEventListener('load', handleLoad);
+    window.addEventListener('load', handlePermission);
 
     // Clean up the event listener on component unmount
     return () => {
-      window.removeEventListener('load', handleLoad);
+      window.removeEventListener('load', handlePermission);
     };
   }, [handlePermission]); // Empty dependency array ensures this runs only once
 
@@ -75,8 +69,8 @@ export default function Home() {
       <div className="w-96 h-96 z-10 text-center overflow-hidden" id="container">
         <p>score: {score}</p>
         <p>timer: {timer}</p>
-        {isIOSDevice ? (
-        <button onClick={handlePermission}>
+        {isIOSDevice() && !requestPermission() ? (
+        <button onClick={requestPermission}>
           Request Permission
         </button>
         ) : null}

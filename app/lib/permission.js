@@ -1,5 +1,3 @@
-// permissionUtils.js
-
 export const isIOSDevice = () => {
   return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 };
