@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import useShakeDetector from "./hooks/useShakeDetector";
-import { isIOSDevice, getPermission } from "./lib/permission"; // Adjust path as needed
+import { getPermission } from "./lib/permission"; // Adjust path as needed
+import { IOSView } from "react-device-detect"
 
 export default function Home() {
   const [score, setScore] = useState(0);
@@ -53,12 +54,11 @@ export default function Home() {
       <div className="w-96 h-96 z-10 text-center overflow-hidden" id="container">
         <p>score: {score}</p>
         <p>timer: {timer}</p>
-        {isIOSDevice() ? "hello" : null}
-        {/* {isIOSDevice() ? ( */}
-        <button onClick={getPermission}>
-          Request Permission
-        </button>
-        {/* ) : null} */}
+        <IOSView>
+          <button onClick={getPermission}>
+            Request Permission
+          </button>
+        </IOSView>
       </div>
     </main>
   );
