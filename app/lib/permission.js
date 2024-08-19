@@ -1,9 +1,9 @@
-export const isIOSDevice = () => {
-  // Ensure this code runs only in the browser
-  if (typeof window === "undefined") return false;
+export const isIOSDevice= () => {
+  if(typeof window === "undefined") return false
+  let platform = navigator?.userAgent || navigator?.platform || 'unknown'
 
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-};
+  return /iPhone|iPod|iPad/.test(platform)
+}
 
 export const getPermission = async () => {
   const requestPermission = DeviceMotionEvent.requestPermission

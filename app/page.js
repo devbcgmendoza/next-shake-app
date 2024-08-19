@@ -47,11 +47,11 @@ export default function Home() {
     return () => clearInterval(timerId);
   }, [timer]);
 
-  // const handlePermission = useCallback(() => {
-  //   if(getPermission) {
-  //     window.location.reload()
-  //   }
-  // }, [])
+  const handlePermission = useCallback(() => {
+    if(getPermission) {
+      window.location.reload()
+    }
+  }, [])
 
   // useEffect(() => {
   //   // Define the onload handler
@@ -75,7 +75,7 @@ export default function Home() {
         <p>timer: {timer}</p>
         {isIOSDevice() ? "hello" : null}
         {/* {isIOSDevice() ? ( */}
-        <button onClick={getPermission}>
+        <button onClick={handlePermission}>
           Request Permission
         </button>
         {/* ) : null} */}
