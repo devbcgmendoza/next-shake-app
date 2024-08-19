@@ -47,33 +47,33 @@ export default function Home() {
     return () => clearInterval(timerId);
   }, [timer]);
 
-  const requestPermission = async () => {
-    console.log("TRIGGERED")
-    const requestPermissionFn =
-      DeviceMotionEvent.requestPermission && typeof DeviceMotionEvent.requestPermission === "function"
-        ? DeviceMotionEvent.requestPermission
-        : null;
+  // const requestPermission = async () => {
+  //   console.log("TRIGGERED")
+  //   const requestPermissionFn =
+  //     DeviceMotionEvent.requestPermission && typeof DeviceMotionEvent.requestPermission === "function"
+  //       ? DeviceMotionEvent.requestPermission
+  //       : null;
 
-        if (requestPermissionFn) {
-          try {
-            const response = await requestPermissionFn();
-            if (response === "granted") {
-              setIsPermissionGranted(true);
-              window.addEventListener("devicemotion", handleDeviceMotion);
-            } else {
-              console.log("Else Denied")
-              console.warn("Device motion permission denied.");
-            }
-          } catch (error) {
-            console.log("Catch Denied")
-            console.error("Permission request failed", error);
-          }
-        };
-  }
+  //       if (requestPermissionFn) {
+  //         try {
+  //           const response = await requestPermissionFn();
+  //           if (response === "granted") {
+  //             setIsPermissionGranted(true);
+  //             window.addEventListener("devicemotion", handleDeviceMotion);
+  //           } else {
+  //             console.log("Else Denied")
+  //             console.warn("Device motion permission denied.");
+  //           }
+  //         } catch (error) {
+  //           console.log("Catch Denied")
+  //           console.error("Permission request failed", error);
+  //         }
+  //       };
+  // }
 
-  useEffect(() => {
-    requestPermission()
-  }, []);
+  // useEffect(() => {
+  //   requestPermission()
+  // }, []);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -81,8 +81,8 @@ export default function Home() {
         <p>score: {score}</p>
         <p>timer: {timer}</p>
         <button onClick={() => {
-          console.log("CLICKED")
-          requestPermission()
+          console.log("@@@@@@@@@@")
+          // handlePermission()
         }}>Request Permission</button>
       </div>
     </main>

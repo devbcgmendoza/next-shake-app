@@ -1,4 +1,3 @@
-// hooks/useShakeDetector.js
 import { useState, useEffect } from 'react';
 
 const useShakeDetector = () => {
@@ -40,6 +39,8 @@ const useShakeDetector = () => {
           const response = await requestPermission();
           if (response === 'granted') {
             window.addEventListener('devicemotion', handleDeviceMotion);
+          } else {
+            console.warn('Device motion permission denied.');
           }
         } catch (error) {
           console.error('Permission request failed', error);
@@ -51,10 +52,11 @@ const useShakeDetector = () => {
 
     handlePermission();
 
+    // Cleanup function to remove the event listener
     return () => {
       window.removeEventListener('devicemotion', handleDeviceMotion);
     };
-  }, []);
+  }, []); // Empty dependency array ensures this runs only once when the component mounts
 
   return { isShaking, shakeIntensity };
 };
