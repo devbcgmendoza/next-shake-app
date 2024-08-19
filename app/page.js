@@ -1,3 +1,4 @@
+"use client"
 import { useState, useEffect, useCallback } from "react";
 import useShakeDetector from "./hooks/useShakeDetector";
 
@@ -52,6 +53,7 @@ export default function Home() {
         <p>timer: {timer}</p>
 
         {!isPermissionGranted && (
+<<<<<<< HEAD
           <button
             onClick={() => window.location.reload()} // Triggering a reload to request permission if not granted
             style={{ border: "1px solid red", padding: ".5rem 1rem", borderRadius: "1rem" }}
@@ -62,6 +64,9 @@ export default function Home() {
 
         {isPermissionGranted && (
           <p>Device motion permission granted. Shake your device!</p>
+=======
+          <p>Requesting device motion permissions. Please allow access if prompted.</p>
+>>>>>>> parent of f525593 (test 3)
         )}
       </div>
     </main>
