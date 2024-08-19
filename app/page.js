@@ -47,26 +47,6 @@ export default function Home() {
     return () => clearInterval(timerId);
   }, [timer]);
 
-  const handlePermission = useCallback(() => {
-    if(getPermission) {
-      window.location.reload()
-    }
-  }, [])
-
-  // useEffect(() => {
-  //   // Define the onload handler
-  //   const handleLoad = async () => {
-  //     await handlePermission();
-  //   };
-
-  //   // Attach the onload event handler
-  //   window.addEventListener('load', handleLoad);
-
-  //   // Clean up the event listener on component unmount
-  //   return () => {
-  //     window.removeEventListener('load', handleLoad);
-  //   };
-  // }, [handlePermission]); // Empty dependency array ensures this runs only once
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -75,7 +55,7 @@ export default function Home() {
         <p>timer: {timer}</p>
         {isIOSDevice() ? "hello" : null}
         {/* {isIOSDevice() ? ( */}
-        <button onClick={handlePermission}>
+        <button onClick={getPermission}>
           Request Permission
         </button>
         {/* ) : null} */}
