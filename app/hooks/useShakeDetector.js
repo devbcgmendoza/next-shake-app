@@ -1,35 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const useShakeDetector = () => {
   const [isShaking, setIsShaking] = useState(false);
   const [shakeIntensity, setShakeIntensity] = useState(0);
   const [isPermissionGranted, setIsPermissionGranted] = useState(false);
 
-  useEffect(() => {
-    const handleDeviceMotion = (event) => {
-      const { accelerationIncludingGravity } = event;
+  const handleDeviceMotion = useCallback((event) => {
+    const { accelerationIncludingGravity } = event;
 
-      if (!accelerationIncludingGravity) return;
+    if (!accelerationIncludingGravity) return;
 
-      const { x, y, z } = accelerationIncludingGravity;
+    const { x, y, z } = accelerationIncludingGravity;
 
-      if (x === null || y === null || z === null) return;
+    if (x === null || y === null || z === null) return;
 
-      const acceleration = Math.sqrt(x * x + y * y + z * z);
-      const SHAKE_THRESHOLD = 15;
+    const acceleration = Math.sqrt(x * x + y * y + z * z);
+    const SHAKE_THRESHOLD = 15;
 
-      if (acceleration > SHAKE_THRESHOLD) {
-        setIsShaking(true);
-        setShakeIntensity(acceleration - SHAKE_THRESHOLD);
+    if (acceleration > SHAKE_THRESHOLD) {
+      setIsShaking(true);
+      setShakeIntensity(acceleration - SHAKE_THRESHOLD);
 
-        setTimeout(() => {
-          setIsShaking(false);
-          setShakeIntensity(0);
-        }, 1000);
-      } else {
+      setTimeout(() => {
         setIsShaking(false);
         setShakeIntensity(0);
-<<<<<<< HEAD
       }, 1000);
     } else {
       setIsShaking(false);
@@ -38,9 +32,14 @@ const useShakeDetector = () => {
   }, []);
 
   const requestPermission = async () => {
-    if (DeviceMotionEvent.requestPermission) {
+    const requestPermissionFn =
+      DeviceMotionEvent.requestPermission && typeof DeviceMotionEvent.requestPermission === "function"
+        ? DeviceMotionEvent.requestPermission
+        : null;
+
+    if (requestPermissionFn) {
       try {
-        const response = await DeviceMotionEvent.requestPermission();
+        const response = await requestPermissionFn();
         if (response === "granted") {
           setIsPermissionGranted(true);
           window.addEventListener("devicemotion", handleDeviceMotion);
@@ -51,8 +50,7 @@ const useShakeDetector = () => {
         console.error("Permission request failed", error);
       }
     } else {
-      // Automatically enable device motion for platforms where no permission request is needed
-      setIsPermissionGranted(true);
+      setIsPermissionGranted(true); // No permission required
       window.addEventListener("devicemotion", handleDeviceMotion);
     }
   };
@@ -63,49 +61,16 @@ const useShakeDetector = () => {
     if (isIOS) {
       requestPermission();
     } else {
-      // Automatically enable device motion for non-iOS devices
-      setIsPermissionGranted(true);
+      setIsPermissionGranted(true); // Assume permission is granted for non-iOS devices
       window.addEventListener("devicemotion", handleDeviceMotion);
     }
 
-=======
-      }
-    };
-
-    const requestPermission = async () => {
-      const requestPermissionFn =
-        DeviceMotionEvent.requestPermission && typeof DeviceMotionEvent.requestPermission === "function"
-          ? DeviceMotionEvent.requestPermission
-          : null;
-
-      if (requestPermissionFn) {
-        try {
-          const response = await requestPermissionFn();
-          if (response === "granted") {
-            setIsPermissionGranted(true);
-            window.addEventListener("devicemotion", handleDeviceMotion);
-          } else {
-            console.warn("Device motion permission denied.");
-          }
-        } catch (error) {
-          console.error("Permission request failed", error);
-        }
-      } else {
-        setIsPermissionGranted(true); // No permission required
-        window.addEventListener("devicemotion", handleDeviceMotion);
-      }
-    };
-
-    requestPermission();
-
-    // Clean up event listener on component unmount
->>>>>>> parent of f525593 (test 3)
     return () => {
       window.removeEventListener("devicemotion", handleDeviceMotion);
     };
-  }, []);
+  }, [handleDeviceMotion]);
 
-  return { isShaking, shakeIntensity, isPermissionGranted };
+  return { isShaking, shakeIntensity, isPermissionGranted, requestPermission };
 };
 
 export default useShakeDetector;

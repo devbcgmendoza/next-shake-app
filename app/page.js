@@ -6,7 +6,7 @@ export default function Home() {
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(11);
 
-  const { isShaking, shakeIntensity, isPermissionGranted } = useShakeDetector();
+  const { isShaking, shakeIntensity, isPermissionGranted, requestPermission } = useShakeDetector();
 
   const createCoin = useCallback(() => {
     const coin = document.createElement("div");
@@ -53,9 +53,8 @@ export default function Home() {
         <p>timer: {timer}</p>
 
         {!isPermissionGranted && (
-<<<<<<< HEAD
           <button
-            onClick={() => window.location.reload()} // Triggering a reload to request permission if not granted
+            onClick={requestPermission} // Triggering a reload to request permission if not granted
             style={{ border: "1px solid red", padding: ".5rem 1rem", borderRadius: "1rem" }}
           >
             Request Device Motion Permission
@@ -64,9 +63,6 @@ export default function Home() {
 
         {isPermissionGranted && (
           <p>Device motion permission granted. Shake your device!</p>
-=======
-          <p>Requesting device motion permissions. Please allow access if prompted.</p>
->>>>>>> parent of f525593 (test 3)
         )}
       </div>
     </main>
