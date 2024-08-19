@@ -1,4 +1,7 @@
 export const isIOSDevice = () => {
+  // Ensure this code runs only in the browser
+  if (typeof window === "undefined") return false;
+
   return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 };
 
