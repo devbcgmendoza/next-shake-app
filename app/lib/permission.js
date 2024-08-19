@@ -6,7 +6,7 @@ export const isIOSDevice = () => {
 };
 
 export const requestPermission = async () => {
-  if (isIOSDevice() && typeof DeviceMotionEvent.requestPermission === 'function') {
+  if (DeviceMotionEvent.requestPermission === 'function') {
     try {
       const response = await DeviceMotionEvent.requestPermission();
       return response === 'granted';
