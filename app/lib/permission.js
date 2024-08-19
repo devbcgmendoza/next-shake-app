@@ -5,11 +5,12 @@ export const isIOSDevice = () => {
   return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 };
 
-export const requestPermission = async () => {
-  if (DeviceMotionEvent.requestPermission === 'function') {
+export const getPermission = async () => {
+  const requestPermission = DeviceMotionEvent.requestPermission
+  if (typeof requestPermission === 'function') {
     try {
-      const response = await DeviceMotionEvent.requestPermission();
-      return response === 'granted';
+      const response = await requestPermission();
+      if(response === "granted") return true
     } catch (error) {
       console.error('Permission request failed', error);
       return false;

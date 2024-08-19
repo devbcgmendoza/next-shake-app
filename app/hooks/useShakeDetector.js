@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { requestPermission } from '../lib/permission'; // Adjust path as needed
+import { getPermission } from '../lib/permission'; // Adjust path as needed
 
 const useShakeDetector = () => {
   const [isShaking, setIsShaking] = useState(false);
@@ -33,7 +33,7 @@ const useShakeDetector = () => {
     };
 
     const setupEventListeners = async () => {
-      const permissionGranted = await requestPermission();
+      const permissionGranted = await getPermission();
       if (permissionGranted) {
         window.addEventListener('devicemotion', handleDeviceMotion);
       }
