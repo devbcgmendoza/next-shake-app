@@ -6,6 +6,7 @@ import useShakeDetector from "./hooks/useShakeDetector";
 export default function Home() {
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(11);
+  const [isPermissionGranted, setIsPermissionGranted] = useState(false);
 
   const { isShaking, shakeIntensity } = useShakeDetector();
 
@@ -47,43 +48,46 @@ export default function Home() {
     return () => clearInterval(timerId);
   }, [timer]);
 
-  // const requestPermission = async () => {
-  //   console.log("TRIGGERED")
-  //   const requestPermissionFn =
-  //     DeviceMotionEvent.requestPermission && typeof DeviceMotionEvent.requestPermission === "function"
-  //       ? DeviceMotionEvent.requestPermission
-  //       : null;
+  const requestPermission = async () => {
+    if (typeof DeviceMotionEvent.requestPermission === 'function') {
+      try {
+        const response = await DeviceMotionEvent.requestPermission();
+        if (response === 'granted') {
+          setIsPermissionGranted(true);
+        } else {
+          console.warn('Device motion permission denied.');
+        }
+      } catch (error) {
+        console.error('Permission request failed', error);
+      }
+    } else {
+      // In case permission request is not supported, assume permission is granted
+      setIsPermissionGranted(true);
+    }
+  };
 
-  //       if (requestPermissionFn) {
-  //         try {
-  //           const response = await requestPermissionFn();
-  //           if (response === "granted") {
-  //             setIsPermissionGranted(true);
-  //             window.addEventListener("devicemotion", handleDeviceMotion);
-  //           } else {
-  //             console.log("Else Denied")
-  //             console.warn("Device motion permission denied.");
-  //           }
-  //         } catch (error) {
-  //           console.log("Catch Denied")
-  //           console.error("Permission request failed", error);
-  //         }
-  //       };
-  // }
+  useEffect(() => {
+    const handleLoad = () => {
+      requestPermission();
+    };
 
-  // useEffect(() => {
-  //   requestPermission()
-  // }, []);
+    // Trigger onload event handler
+    window.addEventListener('load', handleLoad);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener('load', handleLoad);
+    };
+  }, []);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="w-96 h-96 z-10 text-center overflow-hidden" id="container">
         <p>score: {score}</p>
         <p>timer: {timer}</p>
-        <button onClick={() => {
-          console.log("@@@@@@@@@@")
-          // handlePermission()
-        }}>Request Permission</button>
+        <button onClick={requestPermission}>
+          Request Permission
+        </button>
       </div>
     </main>
   );
