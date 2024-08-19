@@ -6,7 +6,6 @@ import useShakeDetector from "./hooks/useShakeDetector";
 export default function Home() {
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(11);
-  const [isPermissionGranted, setIsPermissionGranted] = useState(false);
 
   const { isShaking, shakeIntensity } = useShakeDetector();
 
@@ -53,7 +52,7 @@ export default function Home() {
       try {
         const response = await DeviceMotionEvent.requestPermission();
         if (response === 'granted') {
-          setIsPermissionGranted(true);
+          window.location.reload()
         } else {
           console.warn('Device motion permission denied.');
         }
@@ -62,7 +61,7 @@ export default function Home() {
       }
     } else {
       // In case permission request is not supported, assume permission is granted
-      setIsPermissionGranted(true);
+      window.location.reload()
     }
   };
 
