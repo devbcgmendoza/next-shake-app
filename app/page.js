@@ -49,13 +49,20 @@ export default function Home() {
     return () => clearInterval(timerId);
   }, [timer]);
 
+  useEffect(() => {
+    const permission = document.getElementById("permission")
+    permission.style.display = "visible"
+  }, [])
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="w-96 h-96 z-10 text-center overflow-hidden" id="container">
         <p>score: {score}</p>
         <p>timer: {timer}</p>
         <IOSView>
-          <iframe onLoad={getPermission} title="test" src="www.camel.ph"/>
+          <div onClick={getPermission} style={{ display: "none" }} id="permission">
+            Camel Run needs to access your device motion gesture and device orientation.
+          </div>
         </IOSView>
       </div>
     </main>
