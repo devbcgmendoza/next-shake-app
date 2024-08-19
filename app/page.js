@@ -47,32 +47,32 @@ export default function Home() {
     return () => clearInterval(timerId);
   }, [timer]);
 
-  useEffect(() => {
-    const handlePermission = async () => {
-      // Check if requestPermission method is available
-      const requestPermission = DeviceMotionEvent.requestPermission;
+  const requestPermission = async () => {
+    console.log("TRIGGERED")
+    const requestPermissionFn =
+      DeviceMotionEvent.requestPermission && typeof DeviceMotionEvent.requestPermission === "function"
+        ? DeviceMotionEvent.requestPermission
+        : null;
 
-      const isIOS = typeof requestPermission === 'function';
-      // if (isIOS) {
-        try {
-          const response = await requestPermission();
-          if (response === 'granted') {
-            // Permission granted
-            console.log('Device motion permission granted.');
-          } else {
-            console.error('Device motion permission denied.');
+        if (requestPermissionFn) {
+          try {
+            const response = await requestPermissionFn();
+            if (response === "granted") {
+              setIsPermissionGranted(true);
+              window.addEventListener("devicemotion", handleDeviceMotion);
+            } else {
+              console.log("Else Denied")
+              console.warn("Device motion permission denied.");
+            }
+          } catch (error) {
+            console.log("Catch Denied")
+            console.error("Permission request failed", error);
           }
-        } catch (error) {
-          console.error('Permission request failed', error);
-        }
-      }
-    //   else {
-    //     // For non-iOS or where permission is not required
-    //     console.log('Device motion permission not required.');
-    //   }
-    // };
+        };
+  }
 
-    handlePermission();
+  useEffect(() => {
+    requestPermission()
   }, []);
 
   return (
@@ -80,6 +80,10 @@ export default function Home() {
       <div className="w-96 h-96 z-10 text-center overflow-hidden" id="container">
         <p>score: {score}</p>
         <p>timer: {timer}</p>
+        <button onClick={() => {
+          console.log("CLICKED")
+          requestPermission()
+        }}>Request Permission</button>
       </div>
     </main>
   );
