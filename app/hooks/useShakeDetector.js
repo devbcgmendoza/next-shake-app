@@ -32,14 +32,14 @@ const useShakeDetector = () => {
       }
     };
 
-    const setupEventListeners = async () => {
-      const permissionGranted = await getPermission();
-      if (permissionGranted) {
-        window.addEventListener('devicemotion', handleDeviceMotion);
-      }
-    };
+    // const setupEventListeners = async () => {
+    //   const permissionGranted = await getPermission();
+    //   if (permissionGranted) {
+    //     window.addEventListener('devicemotion', handleDeviceMotion);
+    //   }
+    // };
 
-    setupEventListeners();
+    // setupEventListeners();
 
     // Cleanup function to remove the event listener
     return () => {
