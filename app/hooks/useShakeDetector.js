@@ -5,8 +5,9 @@ const useShakeDetector = () => {
   const [shakeIntensity, setShakeIntensity] = useState(0);
 
   useEffect(() => {
+    // Function to handle the device motion event
     const handleDeviceMotion = (event) => {
-      const accelerationIncludingGravity = event.accelerationIncludingGravity;
+      const { accelerationIncludingGravity } = event;
 
       if (!accelerationIncludingGravity) return; // Guard clause to handle null
 
@@ -36,9 +37,12 @@ const useShakeDetector = () => {
       }
     };
 
+    // Function to handle permissions
     const handlePermission = async () => {
-      // Check for iOS specific permission request
-      const requestPermission = (DeviceMotionEvent.requestPermission && typeof DeviceMotionEvent.requestPermission === 'function') ? DeviceMotionEvent.requestPermission : null;
+      // iOS 13+ specific permission request
+      const requestPermission = (DeviceMotionEvent.requestPermission && typeof DeviceMotionEvent.requestPermission === 'function')
+        ? DeviceMotionEvent.requestPermission
+        : null;
 
       if (requestPermission) {
         try {
@@ -55,6 +59,7 @@ const useShakeDetector = () => {
       }
     };
 
+    // Request permissions and add event listener
     handlePermission();
 
     // Clean up event listener on component unmount
