@@ -1,61 +1,62 @@
-function useShakeDetector() {
-  let isShaking = false;
-  let shakeIntensity = 0;
+// hooks/useShakeDetector.js
+import { useState, useEffect } from 'react';
 
-  const SHAKE_THRESHOLD = 15; // Adjust this value as needed
+const useShakeDetector = () => {
+  const [isShaking, setIsShaking] = useState(false);
+  const [shakeIntensity, setShakeIntensity] = useState(0);
 
-  const handleDeviceMotion = (event) => {
-    const accelerationIncludingGravity = event.accelerationIncludingGravity;
+  useEffect(() => {
+    const handleDeviceMotion = (event) => {
+      const accelerationIncludingGravity = event.accelerationIncludingGravity;
 
-    if (!accelerationIncludingGravity) return; // Guard clause to handle null
+      if (!accelerationIncludingGravity) return;
 
-    const { x, y, z } = accelerationIncludingGravity;
+      const { x, y, z } = accelerationIncludingGravity;
 
-    if (x === null || y === null || z === null) return; // Guard clause for null values
+      if (x === null || y === null || z === null) return;
 
-    // Calculate the acceleration magnitude
-    const acceleration = Math.sqrt(x * x + y * y + z * z);
+      const acceleration = Math.sqrt(x * x + y * y + z * z);
+      const SHAKE_THRESHOLD = 15;
 
-    // Check if the shake exceeds the threshold
-    if (acceleration > SHAKE_THRESHOLD) {
-      isShaking = true;
-      shakeIntensity = acceleration - SHAKE_THRESHOLD;
+      if (acceleration > SHAKE_THRESHOLD) {
+        setIsShaking(true);
+        setShakeIntensity(acceleration - SHAKE_THRESHOLD);
 
-      // Optional: reset shaking status after a short delay
-      setTimeout(() => {
-        isShaking = false;
-        shakeIntensity = 0;
-        // Optional: Call any callback or update UI here if needed
-      }, 1000); // Shake detected for 1 second
-    } else {
-      isShaking = false;
-      shakeIntensity = 0;
-    }
-  };
-
-  const handlePermission = async () => {
-    // Check if requestPermission method is available
-    const requestPermission = DeviceMotionEvent.requestPermission;
-
-    const isIOS = typeof requestPermission === 'function';
-    if (isIOS) {
-      try {
-        const response = await requestPermission();
-        if (response === 'granted') {
-          window.addEventListener('devicemotion', handleDeviceMotion);
-        }
-      } catch (error) {
-        console.error('Permission request failed', error);
+        setTimeout(() => {
+          setIsShaking(false);
+          setShakeIntensity(0);
+        }, 1000);
+      } else {
+        setIsShaking(false);
+        setShakeIntensity(0);
       }
-    } else {
-      // For non-iOS or where permission is not required
-      window.addEventListener('devicemotion', handleDeviceMotion);
-    }
-  };
+    };
 
-  // Call permission handler
-  handlePermission();
+    const handlePermission = async () => {
+      const requestPermission = DeviceMotionEvent.requestPermission;
 
-  // Return an object with the state variables (could be used for further operations)
+      if (typeof requestPermission === 'function') {
+        try {
+          const response = await requestPermission();
+          if (response === 'granted') {
+            window.addEventListener('devicemotion', handleDeviceMotion);
+          }
+        } catch (error) {
+          console.error('Permission request failed', error);
+        }
+      } else {
+        window.addEventListener('devicemotion', handleDeviceMotion);
+      }
+    };
+
+    handlePermission();
+
+    return () => {
+      window.removeEventListener('devicemotion', handleDeviceMotion);
+    };
+  }, []);
+
   return { isShaking, shakeIntensity };
-}
+};
+
+export default useShakeDetector;
