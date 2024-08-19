@@ -49,12 +49,11 @@ export default function Home() {
     return () => clearInterval(timerId);
   }, [timer]);
 
-  const handlePermission = async () => {
-    if(permissionGranted) return
-
+  const handlePermission = useCallback(async () => {
+    if(isPermissionGranted) return
     const permissionGranted = await requestPermission();
     setIsPermissionGranted(permissionGranted);
-  };
+  }, [isPermissionGranted])
 
   useEffect(() => {
     // Define the onload handler
@@ -69,7 +68,7 @@ export default function Home() {
     return () => {
       window.removeEventListener('load', handleLoad);
     };
-  }, []); // Empty dependency array ensures this runs only once
+  }, [handlePermission]); // Empty dependency array ensures this runs only once
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
