@@ -1,5 +1,4 @@
 "use client"
-
 import { useState, useEffect, useCallback } from "react";
 import useShakeDetector from "./hooks/useShakeDetector";
 
@@ -7,7 +6,7 @@ export default function Home() {
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(11);
 
-  const { isShaking, shakeIntensity } = useShakeDetector()
+  const { isShaking, shakeIntensity, isPermissionGranted } = useShakeDetector();
 
   const createCoin = useCallback(() => {
     const coin = document.createElement("div");
@@ -33,7 +32,7 @@ export default function Home() {
   useEffect(() => {
     if (isShaking && shakeIntensity >= 15) {
       createCoins();
-      setScore((prev) => prev + 1)
+      setScore((prev) => prev + 1);
     }
   }, [isShaking, shakeIntensity, createCoins]);
 
@@ -53,7 +52,9 @@ export default function Home() {
         <p>score: {score}</p>
         <p>timer: {timer}</p>
 
-        {/* <button onClick={() => createCoins()} style={{ border: "1px solid red", padding: ".5rem 1rem", borderRadius: "1rem" }}>Click me</button> */}
+        {!isPermissionGranted && (
+          <p>Requesting device motion permissions. Please allow access if prompted.</p>
+        )}
       </div>
     </main>
   );
