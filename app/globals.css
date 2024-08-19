@@ -31,3 +31,21 @@ body {
     text-wrap: balance;
   }
 }
+
+@keyframes fall {
+  0% {
+    transform: translateY(-50px);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+.coin {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: gold;
+  border-radius: 50%;
+  animation: fall 2s linear;
+}
