@@ -71,7 +71,7 @@ const useShakeDetector = () => {
     return () => {
       window.removeEventListener("devicemotion", handleDeviceMotion);
     };
-  }, [handleDeviceMotion]);
+  }, [handleDeviceMotion, requestPermission]);
 
   return { isShaking, shakeIntensity, isPermissionGranted };
 };
