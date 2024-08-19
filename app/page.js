@@ -1,4 +1,3 @@
-"use client"
 import { useState, useEffect, useCallback } from "react";
 import useShakeDetector from "./hooks/useShakeDetector";
 
@@ -6,7 +5,7 @@ export default function Home() {
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(11);
 
-  const { isShaking, shakeIntensity, isPermissionGranted } = useShakeDetector();
+  const { isShaking, shakeIntensity, isPermissionGranted, requestPermission } = useShakeDetector();
 
   const createCoin = useCallback(() => {
     const coin = document.createElement("div");
@@ -52,8 +51,15 @@ export default function Home() {
         <p>score: {score}</p>
         <p>timer: {timer}</p>
 
-        {!isPermissionGranted && (
-          <p>Requesting device motion permissions. Please allow access if prompted.</p>
+        {!isPermissionGranted ? (
+          <button
+            onClick={requestPermission}
+            style={{ border: "1px solid red", padding: ".5rem 1rem", borderRadius: "1rem" }}
+          >
+            Request Device Motion Permission
+          </button>
+        ) : (
+          <p>Device motion permission granted. Shake your device!</p>
         )}
       </div>
     </main>
