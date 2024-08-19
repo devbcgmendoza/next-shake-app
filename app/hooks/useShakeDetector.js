@@ -4,6 +4,7 @@ const useShakeDetector = () => {
   const [isShaking, setIsShaking] = useState(false);
   const [shakeIntensity, setShakeIntensity] = useState(0);
   const [isPermissionGranted, setIsPermissionGranted] = useState(false);
+  const [isAndroidDevice, setIsAndroidDevice] = useState(false);
 
   const handleDeviceMotion = useCallback((event) => {
     const { accelerationIncludingGravity } = event;
@@ -56,12 +57,18 @@ const useShakeDetector = () => {
   };
 
   useEffect(() => {
+    // Check for Android device
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    setIsAndroidDevice(isAndroid);
+  }, []);
+
+  useEffect(() => {
     return () => {
       window.removeEventListener("devicemotion", handleDeviceMotion);
     };
   }, [handleDeviceMotion]);
 
-  return { isShaking, shakeIntensity, isPermissionGranted, requestPermission };
+  return { isShaking, shakeIntensity, isPermissionGranted, requestPermission, isAndroidDevice };
 };
 
 export default useShakeDetector;
