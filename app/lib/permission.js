@@ -4,7 +4,7 @@ export const getPermission = async () => {
     try {
       const response = await requestPermission();
       if(response === "granted") {
-        window.location.reload()
+        // window.location.reload()
         return true
       }
     } catch (error) {
