@@ -2,13 +2,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import useShakeDetector from "./hooks/useShakeDetector";
-import { getPermission } from "./lib/permission"; // Adjust path as needed
 import { IOSView } from "react-device-detect"
 
 export default function Home() {
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(11);
-  const [permissionGranted, setPermissionGranted] = useState(false);
   const { isShaking, shakeIntensity } = useShakeDetector();
 
   const createCoin = useCallback(() => {
@@ -49,18 +47,29 @@ export default function Home() {
     return () => clearInterval(timerId);
   }, [timer]);
 
+  const getPermission = async () => {
+    const requestPermission = DeviceMotionEvent.requestPermission
+    if (typeof requestPermission === 'function') {
+      try {
+        const response = await requestPermission();
+        if(response === "granted") {
+          window.location.reload()
+        }
+      } catch (error) {
+        console.error('Permission request failed', error);
+      }
+    } else {
+      // If not on iOS or permission request is not supported, assume permission is granted
+      return true;
+    }
+  };
+
+
   useEffect(() => {
     const permission = document.getElementById("permission")
     if(!permission) return
     permission.style.display = "block"
   }, [])
-
-  // useEffect(() => {
-  //   (async () => {
-  //     const granted = await getPermission()
-  //     setPermissionGranted(granted)
-  //   })()
-  // }, [])
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
