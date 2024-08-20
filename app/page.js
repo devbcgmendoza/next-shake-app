@@ -7,6 +7,7 @@ import { IOSView } from "react-device-detect"
 export default function Home() {
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(11);
+  const [permissionGranted, setPermissionGranted] = useState(false)
   const { isShaking, shakeIntensity } = useShakeDetector();
 
   const createCoin = useCallback(() => {
@@ -47,12 +48,19 @@ export default function Home() {
     return () => clearInterval(timerId);
   }, [timer]);
 
+  useEffect(() => {
+    if(JSON.parse(localStorage.getItem("shake_permission"))) {
+      setPermissionGranted(true)
+    }
+  }, [])
+
   const getPermission = async () => {
     const requestPermission = DeviceMotionEvent.requestPermission
     if (typeof requestPermission === 'function') {
       try {
         const response = await requestPermission();
         if(response === "granted") {
+          localStorage.setItem("shake_permission", true)
           window.location.reload()
         }
       } catch (error) {
@@ -76,11 +84,13 @@ export default function Home() {
       <div className="w-96 h-96 z-10 text-center overflow-hidden" id="container">
         <p>score: {score}</p>
         <p>timer: {timer}</p>
+        {permissionGranted ? (
           <IOSView>
-          <div onClick={getPermission} style={{ display: "none" }} id="permission">
-            Shake shake fries needs to access your device motion gesture and device orientation.
-          </div>
-        </IOSView>
+            <div onClick={getPermission} style={{ display: "none" }} id="permission">
+              Shake shake fries needs to access your device motion gesture and device orientation.
+            </div>
+          </IOSView>
+        ) : null}
       </div>
     </main>
   );
