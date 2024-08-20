@@ -55,25 +55,23 @@ export default function Home() {
     permission.style.display = "block"
   }, [])
 
-  useEffect(() => {
-    (async () => {
-      const granted = await getPermission()
-      setPermissionGranted(granted)
-    })()
-  }, [])
+  // useEffect(() => {
+  //   (async () => {
+  //     const granted = await getPermission()
+  //     setPermissionGranted(granted)
+  //   })()
+  // }, [])
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="w-96 h-96 z-10 text-center overflow-hidden" id="container">
         <p>score: {score}</p>
         <p>timer: {timer}</p>
-        {permissionGranted ? (
           <IOSView>
           <div onClick={getPermission} style={{ display: "none" }} id="permission">
             Shake shake fries needs to access your device motion gesture and device orientation.
           </div>
         </IOSView>
-        ) : null}
       </div>
     </main>
   );
