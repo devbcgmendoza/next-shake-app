@@ -55,16 +55,25 @@ export default function Home() {
     permission.style.display = "block"
   }, [])
 
+  useEffect(() => {
+    (async () => {
+      const granted = await getPermission()
+      setPermissionGranted(granted)
+    })()
+  }, [])
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="w-96 h-96 z-10 text-center overflow-hidden" id="container">
         <p>score: {score}</p>
         <p>timer: {timer}</p>
-        <IOSView>
+        {permissionGranted ? (
+          <IOSView>
           <div onClick={getPermission} style={{ display: "none" }} id="permission">
-            Camel Run needs to access your device motion gesture and device orientation.
+            Shake shake fries needs to access your device motion gesture and device orientation.
           </div>
         </IOSView>
+        ) : null}
       </div>
     </main>
   );
